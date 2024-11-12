@@ -13,7 +13,29 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #000000;
+  background: linear-gradient(135deg,
+    #000000 0%,
+    #000000 30%,
+    #050505 45%,
+    #080808 50%,
+    #050505 55%,
+    #000000 70%,
+    #000000 100%
+  );
+  background-size: 300% 300%;
+  animation: gradientShift 30s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .container {
