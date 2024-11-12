@@ -46,7 +46,7 @@ const config = {
 
 export function useAnimations() {
   const createScanline = useCallback(() => {
-    const container = document.querySelector('.container') as HTMLElement | null
+    const container = document.querySelector('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.scanline.probability) {
@@ -62,9 +62,10 @@ export function useAnimations() {
         const elapsed = currentTime - startTime
 
         if (elapsed >= config.scanline.duration) {
-          if (container.contains(line)) {
-            container.removeChild(line)
+          if (container) {
+            container.removeChild(line);
           }
+          
           return
         }
 
@@ -96,7 +97,7 @@ export function useAnimations() {
   }, [])
 
   const createVerticalLine = useCallback(() => {
-    const container = document.querySelector('.container') as HTMLElement | null
+    const container = document.querySelector('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.vertical.probability) {
@@ -112,9 +113,7 @@ export function useAnimations() {
         const elapsed = currentTime - startTime
 
         if (elapsed >= config.vertical.duration) {
-          if (container.contains(line)) {
-            container.removeChild(line)
-          }
+          container.removeChild(line)
           return
         }
 
@@ -146,7 +145,7 @@ export function useAnimations() {
   }, [])
 
   const createParticle = useCallback(() => {
-    const container = document.querySelector('.container') as HTMLElement | null
+    const container = document.querySelector('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.particles.probability) {
@@ -193,9 +192,7 @@ export function useAnimations() {
         const elapsed = currentTime - startTime
 
         if (elapsed >= duration) {
-          if (container.contains(particle)) {
-            container.removeChild(particle)
-          }
+          container.removeChild(particle)
           return
         }
 
