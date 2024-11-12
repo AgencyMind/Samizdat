@@ -1,449 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Samizdat</title>
-        <style>
-            /* Reset and base styles */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Samizdat</title>
+    <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-            body,
-            html {
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                background: #000000;
-            }
+      body,
+      html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000000;
+      }
 
-            .container {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-            }
+      .container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
 
-            /* Scanline (horizontal) effect
+      /* Scanline (horizontal) effect
                 * ---------------------------- */
-            .scanline {
-                position: absolute;
-                height: 0.5px;
-                /* Line thickness */
-                width: 100%;
-                transform-origin: center;
-                opacity: 0;
-            }
+      .scanline {
+        position: absolute;
+        height: 0.5px;
+        /* Line thickness */
+        width: 100%;
+        transform-origin: center;
+        opacity: 0;
+      }
 
-            /* RGB separation for scanlines */
-            .scanline::before,
-            .scanline::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 100%;
-                background: linear-gradient(90deg,
-                        transparent 0%,
-                        currentColor 30%,
-                        currentColor 70%,
-                        transparent 100%);
-            }
+      /* RGB separation for scanlines */
+      .scanline::before,
+      .scanline::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          currentColor 30%,
+          currentColor 70%,
+          transparent 100%
+        );
+      }
 
-            .scanline::before {
-                color: rgba(255, 0, 0, 0.12);
-                /* Red channel */
-                transform: translateY(-0.4px);
-                mix-blend-mode: screen;
-            }
+      .scanline::before {
+        color: rgba(255, 0, 0, 0.12);
+        /* Red channel */
+        transform: translateY(-0.4px);
+        mix-blend-mode: screen;
+      }
 
-            .scanline::after {
-                color: rgba(0, 255, 0, 0.12);
-                /* Green channel */
-                transform: translateY(0.4px);
-                mix-blend-mode: screen;
-            }
+      .scanline::after {
+        color: rgba(0, 255, 0, 0.12);
+        /* Green channel */
+        transform: translateY(0.4px);
+        mix-blend-mode: screen;
+      }
 
-            .scanline {
-                color: rgba(0, 0, 255, 0.12);
-                /* Blue channel */
-            }
+      .scanline {
+        color: rgba(0, 0, 255, 0.12);
+        /* Blue channel */
+      }
 
-            /* Vertical line effect
+      /* Vertical line effect
                 * ------------------- */
-            .vertical-line {
-                position: absolute;
-                width: 0.5px;
-                /* Line thickness */
-                height: 100%;
-                transform-origin: center;
-                opacity: 0;
+      .vertical-line {
+        position: absolute;
+        width: 0.5px;
+        /* Line thickness */
+        height: 100%;
+        transform-origin: center;
+        opacity: 0;
+      }
+
+      /* RGB separation for vertical lines */
+      .vertical-line::before,
+      .vertical-line::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          currentColor 30%,
+          currentColor 70%,
+          transparent 100%
+        );
+      }
+
+      .vertical-line::before {
+        color: rgba(255, 0, 0, 0.12);
+        /* Red channel */
+        transform: translateX(-0.4px);
+        mix-blend-mode: screen;
+      }
+
+      .vertical-line::after {
+        color: rgba(0, 255, 0, 0.12);
+        /* Green channel */
+        transform: translateX(0.4px);
+        mix-blend-mode: screen;
+      }
+
+      .vertical-line {
+        color: rgba(0, 0, 255, 0.12);
+        /* Blue channel */
+      }
+
+      /* Particle effects */
+      .particle {
+        position: absolute;
+        opacity: 0;
+        transform-origin: center;
+        mix-blend-mode: screen;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      .particle-fragment {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        mix-blend-mode: screen;
+      }
+
+      .particle-fragment.red {
+        background: rgba(255, 50, 50, 0.8);
+      }
+
+      .particle-fragment.green {
+        background: rgba(50, 255, 50, 0.8);
+      }
+
+      .particle-fragment.blue {
+        background: rgba(50, 50, 255, 0.8);
+      }
+
+      .particle-fragment.white {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      /* CRT glow effect */
+      .crt-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at center,
+          transparent 0%,
+          rgba(18, 16, 0, 0.15) 100%
+        );
+        pointer-events: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container"></div>
+    <div class="crt-overlay"></div>
+
+    <script>
+      // Configuration object - Adjust these values to tune the effect
+      const config = {
+        // Particle settings
+        particles: {
+          spawnInterval: 200, // Time between particle spawn attempts (ms)
+          probability: 0.3, // Chance of spawning particle(s) on each interval
+          minDuration: 2000, // Minimum particle lifetime (ms)
+          maxDuration: 4000, // Maximum particle lifetime (ms)
+          minSize: 1, // Minimum particle size (px)
+          maxSize: 3, // Maximum particle size (px)
+          maxTravelDistance: 100, // Maximum vertical travel distance (px)
+          glitchInterval: 100, // How often to update glitch effects (ms)
+          glitchProbability: 0.3, // Chance of glitch occurring
+          fragmentSpread: 2, // How far fragments can spread (px)
+          maxFragments: 4, // Maximum number of color fragments per particle
+          baseOpacity: 0.4, // Base opacity for particles
+          colors: ['red', 'green', 'blue', 'white'], // Available fragment colors
+        },
+
+        // Scanline (horizontal) settings
+        scanline: {
+          duration: 4000, // How long each scanline takes to move (ms)
+          interval: 2000, // Time between new scanlines (ms)
+          fadeInTime: 400, // Time to fade in (ms)
+          fadeOutTime: 400, // Time to fade out (ms)
+          verticalTravel: 40, // How far the line moves vertically (px)
+          probability: 0.7, // Chance of creating a new line on each interval
+        },
+
+        // Vertical line settings
+        vertical: {
+          duration: 6000, // How long each vertical line takes to move (ms)
+          interval: 3000, // Time between new vertical lines (ms)
+          fadeInTime: 500, // Time to fade in (ms)
+          fadeOutTime: 500, // Time to fade out (ms)
+          probability: 0.5, // Chance of creating a new line on each interval
+        },
+
+        // RGB separation
+        rgbOffset: {
+          x: 0.4, // Horizontal RGB channel separation (px)
+          y: 0.4, // Vertical RGB channel separation (px)
+        },
+
+        // Intensity settings
+        opacity: {
+          red: 0.12, // Red channel opacity
+          green: 0.12, // Green channel opacity
+          blue: 0.12, // Blue channel opacity
+        },
+      };
+
+      const container = document.querySelector('.container');
+
+      // Create and animate a scanline
+      function createScanline() {
+        if (Math.random() > 1 - config.scanline.probability) {
+          const line = document.createElement('div');
+          line.className = 'scanline';
+
+          // Random starting position
+          const top = Math.random() * 100;
+          line.style.top = `${top}%`;
+
+          // Set up animation
+          const startTime = performance.now();
+
+          function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+
+            if (elapsed >= config.scanline.duration) {
+              container.removeChild(line);
+              return;
             }
 
-            /* RGB separation for vertical lines */
-            .vertical-line::before,
-            .vertical-line::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                background: linear-gradient(180deg,
-                        transparent 0%,
-                        currentColor 30%,
-                        currentColor 70%,
-                        transparent 100%);
+            // Calculate opacity
+            let opacity = 0;
+            if (elapsed < config.scanline.fadeInTime) {
+              opacity = elapsed / config.scanline.fadeInTime;
+            } else if (
+              elapsed >
+              config.scanline.duration - config.scanline.fadeOutTime
+            ) {
+              opacity =
+                (config.scanline.duration - elapsed) /
+                config.scanline.fadeOutTime;
+            } else {
+              opacity = 1;
             }
 
-            .vertical-line::before {
-                color: rgba(255, 0, 0, 0.12);
-                /* Red channel */
-                transform: translateX(-0.4px);
-                mix-blend-mode: screen;
+            // Calculate position
+            const progress = elapsed / config.scanline.duration;
+            const translateY = progress * config.scanline.verticalTravel;
+
+            // Apply transformation
+            line.style.opacity = opacity;
+            line.style.transform = `translateY(${translateY}px)`;
+
+            requestAnimationFrame(animate);
+          }
+
+          container.appendChild(line);
+          requestAnimationFrame(animate);
+        }
+      }
+
+      // Create and animate a vertical line
+      function createVerticalLine() {
+        if (Math.random() > 1 - config.vertical.probability) {
+          const line = document.createElement('div');
+          line.className = 'vertical-line';
+
+          // Random starting position
+          const left = Math.random() * 100;
+          line.style.left = `${left}%`;
+
+          // Set up animation
+          const startTime = performance.now();
+
+          function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+
+            if (elapsed >= config.vertical.duration) {
+              container.removeChild(line);
+              return;
             }
 
-            .vertical-line::after {
-                color: rgba(0, 255, 0, 0.12);
-                /* Green channel */
-                transform: translateX(0.4px);
-                mix-blend-mode: screen;
+            // Calculate opacity
+            let opacity = 0;
+            if (elapsed < config.vertical.fadeInTime) {
+              opacity = elapsed / config.vertical.fadeInTime;
+            } else if (
+              elapsed >
+              config.vertical.duration - config.vertical.fadeOutTime
+            ) {
+              opacity =
+                (config.vertical.duration - elapsed) /
+                config.vertical.fadeOutTime;
+            } else {
+              opacity = 1;
             }
 
-            .vertical-line {
-                color: rgba(0, 0, 255, 0.12);
-                /* Blue channel */
+            // Calculate position
+            const progress = elapsed / config.vertical.duration;
+            const translateX = progress * window.innerWidth;
+
+            // Apply transformation
+            line.style.opacity = opacity;
+            line.style.transform = `translateX(${translateX}px)`;
+
+            requestAnimationFrame(animate);
+          }
+
+          container.appendChild(line);
+          requestAnimationFrame(animate);
+        }
+      }
+
+      // Create and animate a particle
+      function createParticle() {
+        if (Math.random() > 1 - config.particles.probability) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+
+          // Random size within configured range
+          const width =
+            config.particles.minSize +
+            Math.random() *
+              (config.particles.maxSize - config.particles.minSize);
+          const height = width * (1 + Math.random() * 0.5); // Slightly vary aspect ratio
+          particle.style.width = `${width}px`;
+          particle.style.height = `${height}px`;
+
+          // Position at bottom of screen with random X
+          const xPos = Math.random() * window.innerWidth;
+          const xOffset = (Math.random() - 0.5) * 20;
+          particle.style.left = `${xPos + xOffset}px`;
+          particle.style.bottom = '0';
+
+          // Create fragments
+          const numFragments =
+            2 + Math.floor(Math.random() * (config.particles.maxFragments - 1));
+          for (let i = 0; i < numFragments; i++) {
+            const fragment = document.createElement('div');
+            const colorClass =
+              config.particles.colors[
+                Math.floor(Math.random() * config.particles.colors.length)
+              ];
+            fragment.className = `particle-fragment ${colorClass}`;
+
+            // Initial fragment offset
+            const offset =
+              (Math.random() - 0.5) * config.particles.fragmentSpread;
+            fragment.style.transform = `translateX(${offset}px)`;
+
+            particle.appendChild(fragment);
+          }
+
+          container.appendChild(particle);
+
+          // Animation parameters
+          const duration =
+            config.particles.minDuration +
+            Math.random() *
+              (config.particles.maxDuration - config.particles.minDuration);
+          const startTime = performance.now();
+          let lastGlitchTime = startTime;
+
+          // Animation loop
+          function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+
+            if (elapsed >= duration) {
+              container.removeChild(particle);
+              return;
             }
 
-            /* Particle effects */
-            .particle {
-                position: absolute;
-                opacity: 0;
-                transform-origin: center;
-                mix-blend-mode: screen;
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-            }
+            const progress = elapsed / duration;
 
-            .particle-fragment {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                mix-blend-mode: screen;
-            }
+            // Base movement
+            const baseY = progress * config.particles.maxTravelDistance;
 
-            .particle-fragment.red {
-                background: rgba(255, 50, 50, 0.8);
-            }
+            // Glitch effects
+            if (
+              currentTime - lastGlitchTime >
+              config.particles.glitchInterval
+            ) {
+              if (Math.random() < config.particles.glitchProbability) {
+                // Random position glitch
+                const glitchX = (Math.random() - 0.5) * 10;
+                const glitchY = (Math.random() - 0.5) * 10;
 
-            .particle-fragment.green {
-                background: rgba(50, 255, 50, 0.8);
-            }
+                // Random rotation and skew
+                const rotate = (Math.random() - 0.5) * 30;
+                const skew = (Math.random() - 0.5) * 20;
 
-            .particle-fragment.blue {
-                background: rgba(50, 50, 255, 0.8);
-            }
-
-            .particle-fragment.white {
-                background: rgba(255, 255, 255, 0.8);
-            }
-
-            /* CRT glow effect */
-            .crt-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: radial-gradient(circle at center,
-                        transparent 0%,
-                        rgba(18, 16, 0, 0.15) 100%);
-                pointer-events: none;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="container"></div>
-        <div class="crt-overlay"></div>
-
-        <script>
-            // Configuration object - Adjust these values to tune the effect
-            const config = {
-                // Particle settings
-                particles: {
-                    spawnInterval: 200,     // Time between particle spawn attempts (ms)
-                    probability: 0.3,        // Chance of spawning particle(s) on each interval
-                    minDuration: 2000,      // Minimum particle lifetime (ms)
-                    maxDuration: 4000,      // Maximum particle lifetime (ms)
-                    minSize: 1,             // Minimum particle size (px)
-                    maxSize: 3,             // Maximum particle size (px)
-                    maxTravelDistance: 100,  // Maximum vertical travel distance (px)
-                    glitchInterval: 100,    // How often to update glitch effects (ms)
-                    glitchProbability: 0.3,  // Chance of glitch occurring
-                    fragmentSpread: 2,       // How far fragments can spread (px)
-                    maxFragments: 4,         // Maximum number of color fragments per particle
-                    baseOpacity: 0.4,       // Base opacity for particles
-                    colors: ['red', 'green', 'blue', 'white'], // Available fragment colors
-                },
-
-                // Scanline (horizontal) settings
-                scanline: {
-                    duration: 4000,      // How long each scanline takes to move (ms)
-                    interval: 2000,      // Time between new scanlines (ms)
-                    fadeInTime: 400,     // Time to fade in (ms)
-                    fadeOutTime: 400,    // Time to fade out (ms)
-                    verticalTravel: 40,  // How far the line moves vertically (px)
-                    probability: 0.7     // Chance of creating a new line on each interval
-                },
-
-                // Vertical line settings
-                vertical: {
-                    duration: 6000,      // How long each vertical line takes to move (ms)
-                    interval: 3000,      // Time between new vertical lines (ms)
-                    fadeInTime: 500,     // Time to fade in (ms)
-                    fadeOutTime: 500,    // Time to fade out (ms)
-                    probability: 0.5     // Chance of creating a new line on each interval
-                },
-
-                // RGB separation
-                rgbOffset: {
-                    x: 0.4,             // Horizontal RGB channel separation (px)
-                    y: 0.4              // Vertical RGB channel separation (px)
-                },
-
-                // Intensity settings
-                opacity: {
-                    red: 0.12,          // Red channel opacity
-                    green: 0.12,        // Green channel opacity
-                    blue: 0.12          // Blue channel opacity
-                }
-            };
-
-            const container = document.querySelector('.container');
-
-            // Create and animate a scanline
-            function createScanline() {
-                if (Math.random() > (1 - config.scanline.probability)) {
-                    const line = document.createElement('div');
-                    line.className = 'scanline';
-
-                    // Random starting position
-                    const top = Math.random() * 100;
-                    line.style.top = `${top}%`;
-
-                    // Set up animation
-                    const startTime = performance.now();
-
-                    function animate(currentTime) {
-                        const elapsed = currentTime - startTime;
-
-                        if (elapsed >= config.scanline.duration) {
-                            container.removeChild(line);
-                            return;
-                        }
-
-                        // Calculate opacity
-                        let opacity = 0;
-                        if (elapsed < config.scanline.fadeInTime) {
-                            opacity = elapsed / config.scanline.fadeInTime;
-                        } else if (elapsed > config.scanline.duration - config.scanline.fadeOutTime) {
-                            opacity = (config.scanline.duration - elapsed) / config.scanline.fadeOutTime;
-                        } else {
-                            opacity = 1;
-                        }
-
-                        // Calculate position
-                        const progress = elapsed / config.scanline.duration;
-                        const translateY = progress * config.scanline.verticalTravel;
-
-                        // Apply transformation
-                        line.style.opacity = opacity;
-                        line.style.transform = `translateY(${translateY}px)`;
-
-                        requestAnimationFrame(animate);
-                    }
-
-                    container.appendChild(line);
-                    requestAnimationFrame(animate);
-                }
-            }
-
-            // Create and animate a vertical line
-            function createVerticalLine() {
-                if (Math.random() > (1 - config.vertical.probability)) {
-                    const line = document.createElement('div');
-                    line.className = 'vertical-line';
-
-                    // Random starting position
-                    const left = Math.random() * 100;
-                    line.style.left = `${left}%`;
-
-                    // Set up animation
-                    const startTime = performance.now();
-
-                    function animate(currentTime) {
-                        const elapsed = currentTime - startTime;
-
-                        if (elapsed >= config.vertical.duration) {
-                            container.removeChild(line);
-                            return;
-                        }
-
-                        // Calculate opacity
-                        let opacity = 0;
-                        if (elapsed < config.vertical.fadeInTime) {
-                            opacity = elapsed / config.vertical.fadeInTime;
-                        } else if (elapsed > config.vertical.duration - config.vertical.fadeOutTime) {
-                            opacity = (config.vertical.duration - elapsed) / config.vertical.fadeOutTime;
-                        } else {
-                            opacity = 1;
-                        }
-
-                        // Calculate position
-                        const progress = elapsed / config.vertical.duration;
-                        const translateX = progress * window.innerWidth;
-
-                        // Apply transformation
-                        line.style.opacity = opacity;
-                        line.style.transform = `translateX(${translateX}px)`;
-
-                        requestAnimationFrame(animate);
-                    }
-
-                    container.appendChild(line);
-                    requestAnimationFrame(animate);
-                }
-            }
-
-            // Create and animate a particle
-            function createParticle() {
-                if (Math.random() > (1 - config.particles.probability)) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-
-                    // Random size within configured range
-                    const width = config.particles.minSize + Math.random() * (config.particles.maxSize - config.particles.minSize);
-                    const height = width * (1 + Math.random() * 0.5); // Slightly vary aspect ratio
-                    particle.style.width = `${width}px`;
-                    particle.style.height = `${height}px`;
-
-                    // Position at bottom of screen with random X
-                    const xPos = Math.random() * window.innerWidth;
-                    const xOffset = (Math.random() - 0.5) * 20;
-                    particle.style.left = `${xPos + xOffset}px`;
-                    particle.style.bottom = '0';
-
-                    // Create fragments
-                    const numFragments = 2 + Math.floor(Math.random() * (config.particles.maxFragments - 1));
-                    for (let i = 0; i < numFragments; i++) {
-                        const fragment = document.createElement('div');
-                        const colorClass = config.particles.colors[Math.floor(Math.random() * config.particles.colors.length)];
-                        fragment.className = `particle-fragment ${colorClass}`;
-
-                        // Initial fragment offset
-                        const offset = (Math.random() - 0.5) * config.particles.fragmentSpread;
-                        fragment.style.transform = `translateX(${offset}px)`;
-
-                        particle.appendChild(fragment);
-                    }
-
-                    container.appendChild(particle);
-
-                    // Animation parameters
-                    const duration = config.particles.minDuration +
-                        Math.random() * (config.particles.maxDuration - config.particles.minDuration);
-                    const startTime = performance.now();
-                    let lastGlitchTime = startTime;
-
-                    // Animation loop
-                    function animate(currentTime) {
-                        const elapsed = currentTime - startTime;
-
-                        if (elapsed >= duration) {
-                            container.removeChild(particle);
-                            return;
-                        }
-
-                        const progress = elapsed / duration;
-
-                        // Base movement
-                        const baseY = progress * config.particles.maxTravelDistance;
-
-                        // Glitch effects
-                        if (currentTime - lastGlitchTime > config.particles.glitchInterval) {
-                            if (Math.random() < config.particles.glitchProbability) {
-                                // Random position glitch
-                                const glitchX = (Math.random() - 0.5) * 10;
-                                const glitchY = (Math.random() - 0.5) * 10;
-
-                                // Random rotation and skew
-                                const rotate = (Math.random() - 0.5) * 30;
-                                const skew = (Math.random() - 0.5) * 20;
-
-                                particle.style.transform = `
-                                        translate(${glitchX}px, ${-baseY + glitchY}px)
+                particle.style.transform = `
+                                        translate(${glitchX}px, ${
+                  -baseY + glitchY
+                }px)
                                         rotate(${rotate}deg)
                                         skew(${skew}deg)
                                     `;
 
-                                // Randomly offset fragments
-                                Array.from(particle.children).forEach(fragment => {
-                                    const offset = (Math.random() - 0.5) * config.particles.fragmentSpread;
-                                    fragment.style.transform = `translateX(${offset}px)`;
-                                });
+                // Randomly offset fragments
+                Array.from(particle.children).forEach((fragment) => {
+                  const offset =
+                    (Math.random() - 0.5) * config.particles.fragmentSpread;
+                  fragment.style.transform = `translateX(${offset}px)`;
+                });
 
-                                // Random clip-path
-                                if (Math.random() > 0.7) {
-                                    const clip = `polygon(
+                // Random clip-path
+                if (Math.random() > 0.7) {
+                  const clip = `polygon(
                                             ${Math.random() * 20}% 0%,
                                             100% ${Math.random() * 20}%,
                                             ${80 + Math.random() * 20}% 100%,
                                             0% ${80 + Math.random() * 20}%
                                         )`;
-                                    particle.style.clipPath = clip;
-                                }
-                            }
-                            lastGlitchTime = currentTime;
-                        }
-
-                        // Opacity fade in/out
-                        let opacity = config.particles.baseOpacity;
-                        if (progress < 0.2) {
-                            opacity *= progress * 5;
-                        } else if (progress > 0.8) {
-                            opacity *= (1 - progress) * 5;
-                        }
-                        particle.style.opacity = opacity;
-
-                        requestAnimationFrame(animate);
-                    }
-
-                    requestAnimationFrame(animate);
+                  particle.style.clipPath = clip;
                 }
+              }
+              lastGlitchTime = currentTime;
             }
 
-            // Start the animation loops
-            setInterval(createScanline, config.scanline.interval);
-            setInterval(createVerticalLine, config.vertical.interval);
-            setInterval(createParticle, config.particles.spawnInterval);
+            // Opacity fade in/out
+            let opacity = config.particles.baseOpacity;
+            if (progress < 0.2) {
+              opacity *= progress * 5;
+            } else if (progress > 0.8) {
+              opacity *= (1 - progress) * 5;
+            }
+            particle.style.opacity = opacity;
 
-            // Update RGB separation
-            function updateRGBSeparation() {
-                const style = document.createElement('style');
-                style.textContent = `
+            requestAnimationFrame(animate);
+          }
+
+          requestAnimationFrame(animate);
+        }
+      }
+
+      // Start the animation loops
+      setInterval(createScanline, config.scanline.interval);
+      setInterval(createVerticalLine, config.vertical.interval);
+      setInterval(createParticle, config.particles.spawnInterval);
+
+      // Update RGB separation
+      function updateRGBSeparation() {
+        const style = document.createElement('style');
+        style.textContent = `
                         .scanline::before { transform: translateY(-${config.rgbOffset.y}px); }
                         .scanline::after { transform: translateY(${config.rgbOffset.y}px); }
                         .vertical-line::before { transform: translateX(-${config.rgbOffset.x}px); }
                         .vertical-line::after { transform: translateX(${config.rgbOffset.x}px); }
                     `;
-                document.head.appendChild(style);
-            }
+        document.head.appendChild(style);
+      }
 
-            // Initial RGB separation update
-            updateRGBSeparation();
-        </script>
-    </body>
+      // Initial RGB separation update
+      updateRGBSeparation();
+    </script>
+  </body>
 </html>
