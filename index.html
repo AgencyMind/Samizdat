@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Agency Mind</title>
+      <style>
+          body {
+              margin: 0;
+              height: 100vh;
+              background: linear-gradient(135deg, #0b0c10, #2d3436, #212121);
+              background-size: 200% 200%;
+              animation: gradientAnimation 10s ease infinite;
+              position: relative;
+          }
+      
+          @keyframes gradientAnimation {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+          }
+      
+          /* Animated line */
+          .line {
+              position: absolute;
+              top: 50%;
+              left: -100%;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(to right, white, yellow);
+              animation: lineAnimation 5s infinite ease-in-out;
+          }
+      
+          @keyframes lineAnimation {
+              0% { left: -100%; }
+              50% { left: 50%; }
+              100% { left: 100%; }
+          }
+      </style>
+  </head>
+  <body>
+    <div class="line"></div>
+  </body>
+</html>
