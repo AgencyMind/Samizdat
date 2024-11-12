@@ -62,7 +62,10 @@ export function useAnimations() {
         const elapsed = currentTime - startTime
 
         if (elapsed >= config.scanline.duration) {
-          container.removeChild(line)
+          if (container) {
+            container.removeChild(line);
+          }
+          
           return
         }
 
