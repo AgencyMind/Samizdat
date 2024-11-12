@@ -16,7 +16,7 @@ const config = {
     fragmentSpread: 2,
     maxFragments: 4,
     baseOpacity: 0.4,
-    colors: ['red', 'green', 'blue', 'white'],
+    colors: ['red', 'green', 'blue', 'white'] as const,
   },
   scanline: {
     duration: 4000,
@@ -42,42 +42,37 @@ const config = {
     green: 0.12,
     blue: 0.12,
   },
-}
+} as const
 
 export function useAnimations() {
   const createScanline = useCallback(() => {
-    const container = document.querySelector('.container')
+    const container = document.querySelector<HTMLDivElement>('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.scanline.probability) {
       const line = document.createElement('div')
       line.className = 'scanline'
-
+      
       const top = Math.random() * 100
       line.style.top = `${top}%`
+      line.style.width = '100vw'  // Set width to full viewport width
+      line.style.left = '0'       // Ensure line starts from the left edge
 
       const startTime = performance.now()
 
-      function animate(currentTime: number) {
+      const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime
 
         if (elapsed >= config.scanline.duration) {
-          if (container) {
-            container.removeChild(line);
-          }
-          
+          container.removeChild(line)
           return
         }
 
         let opacity = 0
         if (elapsed < config.scanline.fadeInTime) {
           opacity = elapsed / config.scanline.fadeInTime
-        } else if (
-          elapsed >
-          config.scanline.duration - config.scanline.fadeOutTime
-        ) {
-          opacity =
-            (config.scanline.duration - elapsed) / config.scanline.fadeOutTime
+        } else if (elapsed > config.scanline.duration - config.scanline.fadeOutTime) {
+          opacity = (config.scanline.duration - elapsed) / config.scanline.fadeOutTime
         } else {
           opacity = 1
         }
@@ -97,7 +92,7 @@ export function useAnimations() {
   }, [])
 
   const createVerticalLine = useCallback(() => {
-    const container = document.querySelector('.container')
+    const container = document.querySelector<HTMLDivElement>('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.vertical.probability) {
@@ -109,7 +104,7 @@ export function useAnimations() {
 
       const startTime = performance.now()
 
-      function animate(currentTime: number) {
+      const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime
 
         if (elapsed >= config.vertical.duration) {
@@ -120,12 +115,8 @@ export function useAnimations() {
         let opacity = 0
         if (elapsed < config.vertical.fadeInTime) {
           opacity = elapsed / config.vertical.fadeInTime
-        } else if (
-          elapsed >
-          config.vertical.duration - config.vertical.fadeOutTime
-        ) {
-          opacity =
-            (config.vertical.duration - elapsed) / config.vertical.fadeOutTime
+        } else if (elapsed > config.vertical.duration - config.vertical.fadeOutTime) {
+          opacity = (config.vertical.duration - elapsed) / config.vertical.fadeOutTime
         } else {
           opacity = 1
         }
@@ -145,16 +136,14 @@ export function useAnimations() {
   }, [])
 
   const createParticle = useCallback(() => {
-    const container = document.querySelector('.container')
+    const container = document.querySelector<HTMLDivElement>('.container')
     if (!container) return
 
     if (Math.random() > 1 - config.particles.probability) {
       const particle = document.createElement('div')
       particle.className = 'particle'
 
-      const width =
-        config.particles.minSize +
-        Math.random() * (config.particles.maxSize - config.particles.minSize)
+      const width = config.particles.minSize + Math.random() * (config.particles.maxSize - config.particles.minSize)
       const height = width * (1 + Math.random() * 0.5)
       particle.style.width = `${width}px`
       particle.style.height = `${height}px`
@@ -164,14 +153,12 @@ export function useAnimations() {
       particle.style.left = `${xPos + xOffset}px`
       particle.style.bottom = '0'
 
-      const numFragments =
-        2 + Math.floor(Math.random() * (config.particles.maxFragments - 1))
+      const numFragments = 2 + Math.floor(Math.random() * (config.particles.maxFragments - 1))
       for (let i = 0; i < numFragments; i++) {
         const fragment = document.createElement('div')
-        const colorClass =
-          config.particles.colors[
-            Math.floor(Math.random() * config.particles.colors.length)
-          ]
+        const colorClass = config.particles.colors[
+          Math.floor(Math.random() * config.particles.colors.length)
+        ]
         fragment.className = `particle-fragment ${colorClass}`
 
         const offset = (Math.random() - 0.5) * config.particles.fragmentSpread
@@ -182,13 +169,12 @@ export function useAnimations() {
 
       container.appendChild(particle)
 
-      const duration =
-        config.particles.minDuration +
+      const duration = config.particles.minDuration +
         Math.random() * (config.particles.maxDuration - config.particles.minDuration)
       const startTime = performance.now()
       let lastGlitchTime = startTime
 
-      function animate(currentTime: number) {
+      const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime
 
         if (elapsed >= duration) {
@@ -213,8 +199,7 @@ export function useAnimations() {
             `
 
             Array.from(particle.children).forEach((fragment) => {
-              const offset =
-                (Math.random() - 0.5) * config.particles.fragmentSpread
+              const offset = (Math.random() - 0.5) * config.particles.fragmentSpread
               ;(fragment as HTMLElement).style.transform = `translateX(${offset}px)`
             })
 
@@ -258,10 +243,18 @@ export function useAnimations() {
   }, [])
 
   const initializeAnimations = useCallback(() => {
-    setInterval(createScanline, config.scanline.interval)
-    setInterval(createVerticalLine, config.vertical.interval)
-    setInterval(createParticle, config.particles.spawnInterval)
+    const intervals = [
+      setInterval(createScanline, config.scanline.interval),
+      setInterval(createVerticalLine, config.vertical.interval),
+      setInterval(createParticle, config.particles.spawnInterval)
+    ]
+
     updateRGBSeparation()
+
+    // Return cleanup function
+    return () => {
+      intervals.forEach(clearInterval)
+    }
   }, [createScanline, createVerticalLine, createParticle, updateRGBSeparation])
 
   return { initializeAnimations }
