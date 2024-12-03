@@ -41,7 +41,7 @@ export function QuotesList() {
       </div>
       
       <div className="text-center">
-        <div className="divider w-32 mx-auto">――――――――</div>
+        <hr className="w-32 mx-auto border-t border-black dark:border-white" />
         
         <div className="mt-8 mb-12">
           <p>
