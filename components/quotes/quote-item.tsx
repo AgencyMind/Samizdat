@@ -6,7 +6,7 @@ interface QuoteItemProps {
 export function QuoteItem({ number, content }: QuoteItemProps) {
   return (
     <div className="mb-4">
-      <span className="quote-number">{number}:</span>
+      <a href="#" className="quote-number">{number}:</a>
       {content}
     </div>
   );
