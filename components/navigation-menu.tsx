@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 
 const items = [
-  { name: "stochastic blue", href: "#" },
+  { name: "stochastic blue", href: "https://stochasticblue.com/" },
   { name: "invoke agents", href: "#" },
-  { name: "quickist", href: "#" },
-  { name: "lens", href: "#" },
-  { name: "farcaster", href: "#" },
-  { name: "bluesky", href: "#" },
-  { name: "threads", href: "#" },
+  { name: "quickist", href: "https://quickist.pro/" },
+  { name: "lens", href: "https://orb.club/@isekai" },
+  { name: "farcaster", href: "https://warpcast.com/samizdat" },
+  { name: "bluesky", href: "https://bsky.app/profile/samizdat.ink" },
+  { name: "threads", href: "https://www.threads.net/@kende" },
 ];
 
 export function MainNav() {
