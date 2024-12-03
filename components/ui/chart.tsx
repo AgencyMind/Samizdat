@@ -425,7 +425,9 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <ResponsiveContainer>{children}</ResponsiveContainer>
+        <ResponsiveContainer>
+          {React.isValidElement(children) ? children : null}
+        </ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
