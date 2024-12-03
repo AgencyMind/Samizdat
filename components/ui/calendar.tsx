@@ -79,8 +79,6 @@
 
 import { DayPicker } from "react-day-picker";
 
-console.log(DayPicker.defaultProps);
-
 const Calendar = () => {
   return (
     <DayPicker
