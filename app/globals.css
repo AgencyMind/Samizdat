@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'VT323';
+  src: url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+}
+
+:root {
+  --card-red: #FF1744;
+}
+
+body {
+  background-color: white;
+  color: black;
+  font-family: 'VT323', monospace;
+  line-height: 1.6;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dark body {
+  background-color: black;
+  color: white;
+}
+
+.quote-number {
+  color: #0066FF;
+  margin-right: 0.5rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.card {
+  aspect-ratio: 3/4;
+  background-color: var(--card-red);
+  border-radius: 4px;
+}
+
+.menu-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.menu-item {
+  color: #0066FF;
+  cursor: pointer;
+}
+
+.menu-item:not(:last-child)::after {
+  content: "*";
+  color: currentColor;
+  margin: 0 0.5rem;
+}
+
+.divider {
+  text-align: center;
+  margin: 2rem 0;
+  font-weight: normal;
+}
+
+@media (max-width: 768px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+  
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
